@@ -680,9 +680,8 @@ module.exports = {"backdrop":"backdrop__1O_L5","modal":"modal__2o6dw"};
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Dialog; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_preact__ = __webpack_require__("KM04");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_preact___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_preact__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__("WhC7");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Dialog_css__ = __webpack_require__("8Oly");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Dialog_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__Dialog_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dialog_css__ = __webpack_require__("8Oly");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dialog_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Dialog_css__);
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -690,7 +689,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 
 
 
@@ -764,12 +762,12 @@ var Dialog = function (_Component) {
         var _this2 = this;
 
         if (this.props.shouldShowModal !== nextProps.shouldShowModal && this._mounted) {
-            var repo = this.props.repo;
+            var repo = nextProps.repo;
 
-            var fullName = repo.full_name;
+            var fullName = repo.repository.full_name;
 
-            repo.fork && Promise.all([this._getSourceRepoInfo(fullName), this._getContributors(fullName), this._getLanguages(fullName), this._getPopularPullRequests(fullName)]).then(function (res) {
-                return _this2.setState({
+            Promise.all([this._getSourceRepoInfo(fullName), this._getContributors(fullName), this._getLanguages(fullName), this._getPopularPullRequests(fullName)]).then(function (res) {
+                return _this2.setStateAsync({
                     loading: false
                 });
             });
@@ -782,7 +780,7 @@ var Dialog = function (_Component) {
         fetch('https://api.github.com/repos/' + fullName).then(function (response) {
             return response.json();
         }).then(function (repoInfo) {
-            return _this3.setState({
+            return _this3.setStateAsync({
                 source_url: repoInfo.source.html_url,
                 source_full_name: repoInfo.source.full_name
             });
@@ -795,7 +793,7 @@ var Dialog = function (_Component) {
         fetch('https://api.github.com/repos/' + fullName + '/contributors').then(function (response) {
             return response.json();
         }).then(function (contributors) {
-            return _this4.setState({
+            return _this4.setStateAsync({
                 contributors: contributors.slice(0, 3)
             });
         });
@@ -816,7 +814,7 @@ var Dialog = function (_Component) {
             }
             return moreThanOneKbLanguages;
         }).then(function (moreThanOneKbLanguages) {
-            return _this5.setState({
+            return _this5.setStateAsync({
                 languages: moreThanOneKbLanguages
             });
         });
@@ -828,7 +826,7 @@ var Dialog = function (_Component) {
         fetch('https://api.github.com/repos/' + fullName + '/pulls?sort=popularity&per_page=5&direction=desc').then(function (response) {
             return response.json();
         }).then(function (popularPullRequests) {
-            return _this6.setState({
+            return _this6.setStateAsync({
                 pullRequests: popularPullRequests
             });
         });
@@ -1766,70 +1764,6 @@ var Repository = function (_Component) {
 }(__WEBPACK_IMPORTED_MODULE_0_preact__["Component"]);
 
 
-
-/***/ }),
-
-/***/ "WhC7":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var REPOS_PER_PAGE = 20;
-
-var getReposURL = function getReposURL(user, page) {
-    return 'https://api.github.com/users/' + user + '/repos?page=' + page + '&per_page=' + REPOS_PER_PAGE;
-};
-
-var getRepoUrl = function getRepoUrl(fullName) {
-    return 'https://api.github.com/repos/' + fullName;
-};
-
-var getContributorsUrl = function getContributorsUrl(fullName) {
-    return 'https://api.github.com/repos/' + fullName + '/contributors';
-};
-
-var getLanguagesUrl = function getLanguagesUrl(fullName) {
-    return 'https://api.github.com/repos/' + fullName + '/languages';
-};
-
-var getPopularPullRequestsLink = function getPopularPullRequestsLink(fullName) {
-    return 'https://api.github.com/repos/' + fullName + '/pulls?sort=popularity&per_page=5&direction=desc';
-};
-
-var API = function () {
-    function API() {
-        _classCallCheck(this, API);
-    }
-
-    API.getRepos = function getRepos(user, page) {
-        return fetch(getReposURL(user, page), {
-            headers: {
-                'Accept': 'application/vnd.github.mercy-preview+json'
-            }
-        });
-    };
-
-    API.getRepoInfo = function getRepoInfo(fullName) {
-        return fetch(getRepoUrl(fullName));
-    };
-
-    API.getRepoContributors = function getRepoContributors(fullName) {
-        return fetch(getContributorsUrl(fullName));
-    };
-
-    API.getRepoLanguages = function getRepoLanguages(fullName) {
-        return fetch(getLanguagesUrl(fullName));
-    };
-
-    API.getPopularPullRequests = function getPopularPullRequests(fullName) {
-        return fetch(getPopularPullRequestsLink(fullName));
-    };
-
-    return API;
-}();
-
-/* unused harmony default export */ var _unused_webpack_default_export = (API);
 
 /***/ }),
 
