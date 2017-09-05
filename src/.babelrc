@@ -1,0 +1,16 @@
+{
+  "presets": ["es2016", "es2017"],
+  "plugins": [
+    "async-to-promises",
+    "transform-async-functions",
+    "transform-runtime",
+    "transform-async-to-generator",
+    "fast-async",
+    "transform-regenerator",
+    ["transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
+}
